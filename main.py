@@ -10,8 +10,8 @@ import os
 os.makedirs("static", exist_ok=True)
 
 app = FastAPI(
-    title="Future Architect",
-    description="Comprehensive Higher Study Plan Generator for Premium Indian Institutes",
+    title="EduNavigator",
+    description="Navigate Your Path to Premium Indian Institutes - Comprehensive Higher Study Plan Generator",
     version="1.0.0"
 )
 
