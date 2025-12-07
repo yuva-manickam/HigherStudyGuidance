@@ -1,6 +1,9 @@
 from fpdf import FPDF
 from data import INSTITUTE_DATA
 import os
+from datetime import datetime
+import uuid
+import random
 
 class PDF(FPDF):
     def header(self):
@@ -96,31 +99,79 @@ def generate_study_plan_pdf(user_name, institute_key, category="General"):
     pdf = PDF()
     pdf.add_page()
     
-    # Personalization
+    # Generate unique report ID and timestamp
+    report_id = str(uuid.uuid4())[:8].upper()
+    generation_time = datetime.now()
+    formatted_time = generation_time.strftime("%B %d, %Y at %I:%M %p")
+    formatted_date = generation_time.strftime("%Y-%m-%d")
+    
+    # Personalization Header with Report ID
     pdf.set_font("Arial", "B", 16)
     pdf.set_text_color(0, 0, 0)
     pdf.cell(0, 10, f"Prepared for: {user_name}", 0, 1, 'L')
     
-    # Category Information
+    # Report Metadata
+    pdf.set_font("Arial", "", 10)
+    pdf.set_text_color(100, 100, 100)
+    pdf.cell(0, 6, f"Report ID: {report_id} | Generated: {formatted_time}", 0, 1, 'L')
+    pdf.cell(0, 6, f"Data Version: 2025-2026 Academic Year | Last Updated: December 2024", 0, 1, 'L')
+    pdf.ln(3)
+    
+    # Category Information with enhanced styling
     pdf.set_font("Arial", "B", 12)
     pdf.set_fill_color(240, 248, 255)
     pdf.cell(40, 8, "Category:", 0, 0, 'L', fill=True)
-    pdf.set_font("Arial", "", 12)
+    pdf.set_font("Arial", "B", 12)
+    pdf.set_text_color(79, 70, 229)
     pdf.cell(0, 8, category, 0, 1, 'L', fill=True)
-    pdf.ln(5)
+    pdf.set_text_color(0, 0, 0)
+    pdf.ln(3)
     
-    # Category-specific note
+    # Category-specific benefits and personalized analysis
     if category != "General":
         pdf.set_font("Arial", "I", 10)
         pdf.set_text_color(0, 100, 0)
         category_benefits = {
-            "OBC": "OBC candidates typically get 27% reservation and relaxed cutoffs (usually 5-10% lower than General category).",
-            "SC": "SC candidates get 15% reservation with significant cutoff relaxation (typically 15-20% lower than General).",
-            "ST": "ST candidates get 7.5% reservation with significant cutoff relaxation (typically 15-20% lower than General).",
-            "EWS": "EWS candidates get 10% reservation with slight cutoff relaxation (typically 2-5% lower than General)."
+            "OBC": {
+                "reservation": "27%",
+                "relaxation": "5-10%",
+                "description": "OBC candidates benefit from 27% reservation and relaxed cutoffs (typically 5-10% lower than General category).",
+                "advantage": "You have a significant advantage with OBC reservation. Your effective competition is reduced by approximately 73%."
+            },
+            "SC": {
+                "reservation": "15%",
+                "relaxation": "15-20%",
+                "description": "SC candidates get 15% reservation with significant cutoff relaxation (typically 15-20% lower than General).",
+                "advantage": "With SC reservation, you compete within a smaller pool and enjoy substantial cutoff relaxation."
+            },
+            "ST": {
+                "reservation": "7.5%",
+                "relaxation": "15-20%",
+                "description": "ST candidates get 7.5% reservation with significant cutoff relaxation (typically 15-20% lower than General).",
+                "advantage": "ST reservation provides you with dedicated seats and considerable cutoff benefits."
+            },
+            "EWS": {
+                "reservation": "10%",
+                "relaxation": "2-5%",
+                "description": "EWS candidates get 10% reservation with slight cutoff relaxation (typically 2-5% lower than General).",
+                "advantage": "EWS reservation gives you access to additional seats beyond the general quota."
+            }
         }
         if category in category_benefits:
-            pdf.multi_cell(0, 5, f"Note: {category_benefits[category]}")
+            benefit = category_benefits[category]
+            pdf.set_fill_color(240, 255, 240)
+            pdf.multi_cell(0, 5, f"✓ Reservation Benefit: {benefit['description']}", 0, 'L', fill=True)
+            pdf.ln(2)
+            pdf.set_font("Arial", "B", 10)
+            pdf.set_text_color(0, 100, 200)
+            pdf.multi_cell(0, 5, f"💡 Your Advantage: {benefit['advantage']}")
+        pdf.set_text_color(0, 0, 0)
+        pdf.ln(5)
+    else:
+        # General category note
+        pdf.set_font("Arial", "I", 9)
+        pdf.set_text_color(100, 100, 100)
+        pdf.multi_cell(0, 5, "Note: You are applying under General category. Cutoffs shown are for General category candidates.")
         pdf.set_text_color(0, 0, 0)
         pdf.ln(5)
     
