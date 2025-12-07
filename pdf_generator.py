@@ -160,11 +160,11 @@ def generate_study_plan_pdf(user_name, institute_key, category="General"):
         if category in category_benefits:
             benefit = category_benefits[category]
             pdf.set_fill_color(240, 255, 240)
-            pdf.multi_cell(0, 5, f"✓ Reservation Benefit: {benefit['description']}", 0, 'L', fill=True)
+            pdf.multi_cell(0, 5, f">> Reservation Benefit: {benefit['description']}", 0, 'L', fill=True)
             pdf.ln(2)
             pdf.set_font("Arial", "B", 10)
             pdf.set_text_color(0, 100, 200)
-            pdf.multi_cell(0, 5, f"💡 Your Advantage: {benefit['advantage']}")
+            pdf.multi_cell(0, 5, f"Your Advantage: {benefit['advantage']}")
         pdf.set_text_color(0, 0, 0)
         pdf.ln(5)
     else:
